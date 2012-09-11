@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>jQuery.Validator 2</title>
+
+		<script type='text/javascript' src='http://code.jquery.com/jquery-1.8.0.js'></script>
+		<script type='text/javascript' src='js/jquery.validator2-min.js'></script>
+		
+		<link rel="stylesheet" type="text/css" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css">
+
+		<style type='text/css'>
+			br.clear { clear: both; }
+			.text-center { text-align: center; }
+			.text-right { text-align: center; }
+		</style>
+
+		<script type='text/javascript'>//<![CDATA[ 
+			$(document).ready(function() {
+			$.validator.addRule({ el: $('#name') });
+			$.validator.addRule({ el: '#pass', type: 'required' });
+			$.validator.addRule({ el: '#passc', type: 'equal', to: $('#pass') });
+			$.validator.addRule({ el: '#email', type: 'email' });
+			$.validator.addRule({ el: '#emailc', type: 'equal', to: '#email' });
+			$.validator.addRule({ el: '#tos', type: 'required' });
+			$.validator.addRule({ el: '#aboutme', type: 'required' });
+			$.validator.addRule({ el: '#birthdate', type: 'regex', match: /^\d{4}\/\d{1,2}\/\d{1,2}$/ });
+			$.validator.addRule({ el: 'input[name=newsletter]', type: 'required' });
+
+			$('#frmSignup').on('submit', function() {
+				return $.validator.validate({
+					form: $(this),
+					error: function(fields) {
+						fields.each(function() {
+							var parent = $(this).closest('.control-group');
+							parent.addClass('error');
+							$(this).on('focus', function() {
+								var parent = $(this).closest('.control-group');
+								parent.removeClass('error');
+							});
+						});
+					}
+				});
+			});
+
+			});//]]> 
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<h2>jQuery.Validator 2</h2>
+			<hr />
+			<div class="row">
+				<div class="span8 offset2">
+					<form id="frmSignup" method="POST" class="form-horizontal">
+						<div class="alert alert-warning"><strong>Note:</strong> All fields are required</div>
+						<div class="well">
+							<div class="control-group">
+								<label for="name" class="control-label">Name</label>
+								<div class="controls">
+									<input id="name" name="name" type="text" class="input-block-level" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="email" class="control-label">Email</label>
+								<div class="controls">
+									<input id="email" name="email" type="text" class="input-block-level" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="emailc" class="control-label">Confirm email</label>
+								<div class="controls">
+									<input id="emailc" name="emailc" type="text" class="input-block-level" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="pass" class="control-label">Password</label>
+								<div class="controls">
+									<input id="pass" name="pass" type="password" class="input-block-level" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="passc" class="control-label">Confirm password</label>
+								<div class="controls">
+									<input id="passc" name="passc" type="password" class="input-block-level" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="birthdate" class="control-label">Birth date (YYYY/MM/DD)</label>
+								<div class="controls">
+									<input id="birthdate" name="birthdate" type="text" class="input-block-level" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="aboutme" class="control-label">About me</label>
+								<div class="controls">
+									<textarea id="aboutme" name="aboutme" type="text" class="input-block-level"></textarea>
+								</div>
+							</div>
+							<div class="control-group">
+								<div class="controls">
+									<label for="tos" class="checkbox">
+										<input id="tos" name="tos" type="checkbox" /> I've read and I accept the <a href="#">Terms of Service</a>
+									</label>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">Do you like to receive our newsletter? </label>
+								<div class="controls">
+									<label for="newsletter_yes" class="radio">
+										<input id="newsletter_yes" name="newsletter" type="radio" /> Yes
+									</label>
+									<label for="newsletter_no" class="radio">
+										<input id="newsletter_no" name="newsletter" type="radio" /> No
+									</label>
+								</div>
+							</div>
+							<div class="form-actions">
+								<button class="btn pull-right">Continue &raquo;</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<hr />
+			<p class="text-center muted">by biohzrdmx</p>
+			<br />
+		</div>
+	</body>
+</html>
+
