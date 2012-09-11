@@ -12,6 +12,16 @@ Just kidding. This plugin was meant to be as easy-to-use as possible, just add s
 
 * jQuery 1.7 or greater
 
+## License
+
+Licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License:
+
+* Commercial use allowed
+* Attribution required
+* Share alike
+
+What does that mean? You may use it in commercial projects and share it along with any changes you make to it. Attribution is required by the license but I'll leave it up to you.
+
 ## How does it work?
 
 After you've created your form you just have to add some validation rules and on the submit event you ask the validator whether you can continue or not. It's dead easy.
