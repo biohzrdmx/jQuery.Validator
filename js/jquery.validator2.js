@@ -1,19 +1,14 @@
 /*
- *	jquery.validator2.js
+ *  jquery.validator2.js
  *
- *	Plugin: Validator
- *	Author: biohzrdmx
- *	Description: A very simple form validation plugin
- *	Version: 2.0 rev. 910
- *
- *	Licensed under Creative Commons Attribution-ShareAlike 3.0 Unported License:
- *
- *		- Commercial use allowed
- *		- Attribution required
- *		- Share alike
+ *  Plugin: Validator
+ *  Author: biohzrdmx
+ *  Description: A very simple form validation plugin
+ *  Version: 2.3
+ *  License: MIT
  */
 (function($) {
-    
+
     $.validator = {
         rules: [],
         init: function(options) {
@@ -26,10 +21,12 @@
             return stringToTrim.replace(/\s+$/,"");
         },
         validate: function(options) {
+            var validator = this;
             var opts = $.extend({
+                rules: [],
                 form: null,
-                success: function() { /* no-op */ },
-                error: function() { /* no-op */ }
+                success: validator.onSuccess,
+                error: validator.onError
             }, options);
             var error = 0;
             var email = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
@@ -46,9 +43,11 @@
             } else {
                 form = opts.form;
             }
+            // Rules to check
+            var ruleSet = opts.rules.length > 0 ? opts.rules : this.rules;
             // Check each rule
-            for(var i= 0; i< this.rules.length; i++) {
-                rule = this.rules[i];
+            for(var i= 0; i< ruleSet.length; i++) {
+                rule = ruleSet[i];
                 if (typeof(rule.el) == 'string') {
                     elem = $(rule.el);
                 } else {
@@ -70,6 +69,7 @@
                         // Value must be set and/or not empty
                         elem.each(function() {
                             el = $(this);
+                            if ( el.is(':disabled') ) return;
                             val = ptr.ltrim(ptr.rtrim(el.val()));
                             // Checkboxes must be checked, radio groups must have at least one checked item, otherwise val() must not be empty
                             if ((el.is(':checkbox ') && !el.is(':checked')) ||
@@ -84,6 +84,7 @@
                         // Value must be a valid email address
                         elem.each(function() {
                             el = $(this);
+                            if ( el.is(':disabled') ) return;
                             if (!email.test(el.val())) {
                                 error++;
                                 fields.push(el);
@@ -94,6 +95,7 @@
                         // Value must pass regex test
                         elem.each(function() {
                             el = $(this);
+                            if ( el.is(':disabled') ) return;
                             if (rule.param === null || !rule.param.test(el.val())) {
                                 error++;
                                 fields.push(el);
@@ -112,11 +114,53 @@
                             } else {
                                 compare = rule.param
                             }
+                            if ( el.is(':disabled') || compare.is(':disabled') ) return;
                             if (compare === null || el.val() == '' || el.val() !== compare.val()) {
                                 error++;
                                 fields.push(el);
                             }
                         });
+                        break;
+                    case 'checkboxes':
+                        // At least one checkbox must be set
+                        elem.each(function() {
+                            el = $(this);
+                            if ( el.is(':disabled') ) return;
+                            var group = el.attr(rule.param);
+                            if ( (el.is(':checkbox') && $('input['+rule.param+'="'+group+'"]:checked').length == 0 ) ){
+                                error++;
+                                fields.push(el);
+                            }
+                        });
+                        break;
+                    case 'at least':
+                    case 'at most':
+                        // Value must be set and/or not empty
+                        var localFields = [];
+                        var count = 0;
+                        elem.each(function() {
+                            el = $(this);
+                            if ( el.is(':disabled') ) return;
+                            val = ptr.ltrim(ptr.rtrim(el.val()));
+                            localFields.push(el);
+                            // Checkboxes must be checked, radio groups must have at least one checked item, otherwise val() must not be empty
+                            if ((el.is(':checkbox ') && !el.is(':checked')) ||
+                                (el.is(':radio') && $('input[name='+el.attr('name')+']:checked').length == 0 ) ||
+                                (val == '') ){
+                                // Do nothing, an empty field doesn't increment counter
+                            } else {
+                                count++;
+                            }
+                        });
+                        if (rule.type == 'at least' && count < rule.param) {
+                            // There aren't at least n items
+                            error++;
+                            fields = fields.concat(localFields);
+                        } else if (rule.type == 'at most' && count > rule.param) {
+                            // At most n items
+                            error++;
+                            fields = fields.concat(localFields);
+                        }
                         break;
                 }
             }
@@ -133,6 +177,7 @@
             }
         },
         addRule: function(options) {
+            var validator = this;
             var opts = $.extend({
                 el: null,
                 type: 'required',
@@ -140,7 +185,8 @@
                 attr: null,
                 param: null,
                 to: null,
-                match: null
+                match: null,
+                auto: false
             }, options);
             if (opts.el !== null) {
                 var rule = {
@@ -149,9 +195,29 @@
                     msg: opts.msg,
                     param: opts.param || opts.to || opts.match
                 };
+                // Automatic validation
+                if (opts.auto) {
+                    var el = typeof opts.el == 'string' ? $(opts.el) : opts.el;
+                    el.on('blur', function() {
+                        validator.validate({
+                            form: el.closest('form'),
+                            rules: [ rule ],
+                            error: validator.onError,
+                            success: function() {
+                                validator.onSuccess.call(validator, el);
+                            }
+                        });
+                    });
+                }
                 // Save the rule
                 this.rules.push(rule);
             }
+        },
+        onSuccess: function(fields) {
+            /* Placeholder, override to receive notifications on auto validating fields */
+        },
+        onError: function(fields) {
+            /* Placeholder, override to receive errors on auto validating fields */
         }
     };
 })(jQuery);
