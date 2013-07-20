@@ -5,8 +5,8 @@
 		<title>jQuery.Validator 2</title>
 
 		<script type='text/javascript' src='http://code.jquery.com/jquery-1.8.0.js'></script>
-		<script type='text/javascript' src='js/jquery.validator2-min.js'></script>
-		
+		<script type='text/javascript' src='js/jquery.validator2.min.js'></script>
+
 		<link rel="stylesheet" type="text/css" href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css">
 
 		<style type='text/css'>
@@ -15,35 +15,39 @@
 			.text-right { text-align: center; }
 		</style>
 
-		<script type='text/javascript'>//<![CDATA[ 
+		<script type='text/javascript'>//<![CDATA[
 			$(document).ready(function() {
-			$.validator.addRule({ el: $('#name') });
-			$.validator.addRule({ el: '#pass', type: 'required' });
-			$.validator.addRule({ el: '#passc', type: 'equal', to: $('#pass') });
-			$.validator.addRule({ el: '#email', type: 'email' });
-			$.validator.addRule({ el: '#emailc', type: 'equal', to: '#email' });
-			$.validator.addRule({ el: '#tos', type: 'required' });
-			$.validator.addRule({ el: '#aboutme', type: 'required' });
-			$.validator.addRule({ el: '#birthdate', type: 'regex', match: /^\d{4}\/\d{1,2}\/\d{1,2}$/ });
-			$.validator.addRule({ el: 'input[name=newsletter]', type: 'required' });
+				var d = new Date();
 
-			$('#frmSignup').on('submit', function() {
-				return $.validator.validate({
-					form: $(this),
-					error: function(fields) {
-						fields.each(function() {
-							var parent = $(this).closest('.control-group');
-							parent.addClass('error');
-							$(this).on('focus', function() {
+				$.validator.addRule({ el: $('#name') });
+				$.validator.addRule({ el: '#pass', type: 'required' });
+				$.validator.addRule({ el: '#passc', type: 'equal', to: $('#pass') });
+				$.validator.addRule({ el: '#email', type: 'email' });
+				$.validator.addRule({ el: '#emailc', type: 'equal', to: '#email' });
+				$.validator.addRule({ el: '#tos', type: 'required' });
+				$.validator.addRule({ el: '#aboutme', type: 'required' });
+				$.validator.addRule({ el: '#birthdate_regex', type: 'regex', match: /^\d{4}\/\d{1,2}\/\d{1,2}$/ });
+				$.validator.addRule({ el: '#birthdate', type: 'date', before: '1995/01/01' });
+				$.validator.addRule({ el: '#year, #month, #day', type: 'date', after: '2013/12/24' });
+				$.validator.addRule({ el: 'input[name=newsletter]', type: 'required' });
+
+				$('#frmSignup').on('submit', function() {
+					return $.validator.validate({
+						form: $(this),
+						error: function(fields) {
+							fields.each(function() {
 								var parent = $(this).closest('.control-group');
-								parent.removeClass('error');
+								parent.addClass('error');
+								$(this).on('focus', function() {
+									var parent = $(this).closest('.control-group');
+									parent.removeClass('error');
+								});
 							});
-						});
-					}
+						}
+					});
 				});
-			});
 
-			});//]]> 
+			});//]]>
 		</script>
 	</head>
 	<body>
@@ -86,9 +90,85 @@
 								</div>
 							</div>
 							<div class="control-group">
-								<label for="birthdate" class="control-label">Birth date (YYYY/MM/DD)</label>
+								<label for="birthdate_regex" class="control-label">Birth date <span class="muted">(regex-only)</span> (YYYY/MM/DD)</label>
+								<div class="controls">
+									<input id="birthdate_regex" name="birthdate_regex" type="text" class="input-block-level" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="birthdate" class="control-label">Birth date <span class="muted">(age-check)</span> (YYYY/MM/DD)</label>
 								<div class="controls">
 									<input id="birthdate" name="birthdate" type="text" class="input-block-level" />
+									<span class="help-block">Tip: Any date before 1995/01/01 will do</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label for="" class="control-label">Birth date <span class="muted">(composite)</span> (YYYY/MM/DD)</label>
+								<div class="controls">
+									<select name="year" id="year" class="input-small" data-name="year">
+										<option value=""></option>
+										<option value="2015">2015</option>
+										<option value="2014">2014</option>
+										<option value="2013">2013</option>
+										<option value="2012">2012</option>
+										<option value="2011">2011</option>
+										<option value="2010">2010</option>
+										<option value="2009">2009</option>
+										<option value="2008">2008</option>
+										<option value="2007">2007</option>
+										<option value="2006">2006</option>
+										<option value="2005">2005</option>
+									</select>
+									<select name="month" id="month" class="input-small" data-name="month">
+										<option value=""></option>
+										<option value="01">01</option>
+										<option value="02">02</option>
+										<option value="03">03</option>
+										<option value="04">04</option>
+										<option value="05">05</option>
+										<option value="06">06</option>
+										<option value="07">07</option>
+										<option value="08">08</option>
+										<option value="09">09</option>
+										<option value="10">10</option>
+										<option value="11">11</option>
+										<option value="12">12</option>
+									</select>
+									<select name="day" id="day" class="input-small" data-name="day">
+										<option value=""></option>
+										<option value="01">01</option>
+										<option value="02">02</option>
+										<option value="03">03</option>
+										<option value="04">04</option>
+										<option value="05">05</option>
+										<option value="06">06</option>
+										<option value="07">07</option>
+										<option value="08">08</option>
+										<option value="09">09</option>
+										<option value="10">10</option>
+										<option value="11">11</option>
+										<option value="12">12</option>
+										<option value="13">13</option>
+										<option value="14">14</option>
+										<option value="15">15</option>
+										<option value="16">16</option>
+										<option value="17">17</option>
+										<option value="18">18</option>
+										<option value="19">19</option>
+										<option value="20">20</option>
+										<option value="21">21</option>
+										<option value="22">22</option>
+										<option value="23">23</option>
+										<option value="24">24</option>
+										<option value="25">25</option>
+										<option value="26">26</option>
+										<option value="27">27</option>
+										<option value="28">28</option>
+										<option value="29">29</option>
+										<option value="30">30</option>
+										<option value="31">31</option>
+									</select>
+									<span class="help-block">Tip: Any date after 2013/12/24 will do</span>
 								</div>
 							</div>
 							<div class="control-group">

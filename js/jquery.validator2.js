@@ -4,7 +4,7 @@
  *  Plugin: Validator
  *  Author: biohzrdmx
  *  Description: A very simple form validation plugin
- *  Version: 2.3
+ *  Version: 2.5 (20130720)
  *  License: MIT
  */
 (function($) {
@@ -66,101 +66,174 @@
                 // Check rule type
                 switch (rule.type) {
                     case 'required':
-                        // Value must be set and/or not empty
-                        elem.each(function() {
-                            el = $(this);
-                            if ( el.is(':disabled') ) return;
-                            val = ptr.ltrim(ptr.rtrim(el.val()));
-                            // Checkboxes must be checked, radio groups must have at least one checked item, otherwise val() must not be empty
-                            if ((el.is(':checkbox ') && !el.is(':checked')) ||
-                                (el.is(':radio') && $('input[name='+el.attr('name')+']:checked').length == 0 ) ||
-                                (val == '') ){
-                                error++;
-                                fields.push(el);
-                            }
-                        });
+                        try {
+                            // Value must be set and/or not empty
+                            elem.each(function() {
+                                el = $(this);
+                                if ( el.is(':disabled') ) return;
+                                val = ptr.ltrim(ptr.rtrim(el.val()));
+                                // Checkboxes must be checked, radio groups must have at least one checked item, otherwise val() must not be empty
+                                if ((el.is(':checkbox ') && !el.is(':checked')) ||
+                                    (el.is(':radio') && $('input[name='+el.attr('name')+']:checked').length == 0 ) ||
+                                    (val == '') ){
+                                    error++;
+                                    fields.push(el);
+                                }
+                            });
+                        } catch (err) { /* noop */ }
                         break;
                     case 'email':
-                        // Value must be a valid email address
-                        elem.each(function() {
-                            el = $(this);
-                            if ( el.is(':disabled') ) return;
-                            if (!email.test(el.val())) {
-                                error++;
-                                fields.push(el);
-                            }
-                        });
+                        try {
+                            // Value must be a valid email address
+                            elem.each(function() {
+                                el = $(this);
+                                if ( el.is(':disabled') ) return;
+                                if (!email.test(el.val())) {
+                                    error++;
+                                    fields.push(el);
+                                }
+                            });
+                        } catch (err) { /* noop */ }
                         break;
                     case 'regex':
-                        // Value must pass regex test
-                        elem.each(function() {
-                            el = $(this);
-                            if ( el.is(':disabled') ) return;
-                            if (rule.param === null || !rule.param.test(el.val())) {
-                                error++;
-                                fields.push(el);
-                            }
-                        });
+                        try {
+                            // Value must pass regex test
+                            elem.each(function() {
+                                el = $(this);
+                                if ( el.is(':disabled') ) return;
+                                if (rule.param === null || !rule.param.test(el.val())) {
+                                    error++;
+                                    fields.push(el);
+                                }
+                            });
+                        } catch (err) { /* noop */ }
                         break;
                     case 'equal':
-                        // Value must be equal to another element's value
-                        elem.each(function() {
-                            el = $(this);
-                            var compare = null;
-                            // Check type of 'param' var
-                            if (typeof(rule.param) == 'string') {
-                                // If it's a string it must be a jQuery selector, run it
-                                compare = $(rule.param);
-                            } else {
-                                compare = rule.param
-                            }
-                            if ( el.is(':disabled') || compare.is(':disabled') ) return;
-                            if (compare === null || el.val() == '' || el.val() !== compare.val()) {
-                                error++;
-                                fields.push(el);
-                            }
-                        });
+                        try {
+                            // Value must be equal to another element's value
+                            elem.each(function() {
+                                el = $(this);
+                                var compare = null;
+                                // Check type of 'param' var
+                                if (typeof(rule.param) == 'string') {
+                                    // If it's a string it must be a jQuery selector, run it
+                                    compare = $(rule.param);
+                                } else {
+                                    compare = rule.param
+                                }
+                                if ( el.is(':disabled') || compare.is(':disabled') ) return;
+                                if (compare === null || el.val() == '' || el.val() !== compare.val()) {
+                                    error++;
+                                    fields.push(el);
+                                }
+                            });
+                        } catch (err) { /* noop */ }
                         break;
                     case 'checkboxes':
-                        // At least one checkbox must be set
-                        elem.each(function() {
-                            el = $(this);
-                            if ( el.is(':disabled') ) return;
-                            var group = el.attr(rule.param);
-                            if ( (el.is(':checkbox') && $('input['+rule.param+'="'+group+'"]:checked').length == 0 ) ){
-                                error++;
-                                fields.push(el);
-                            }
-                        });
+                        try {
+                            // At least one checkbox must be set
+                            elem.each(function() {
+                                el = $(this);
+                                if ( el.is(':disabled') ) return;
+                                var group = el.attr(rule.param);
+                                if ( (el.is(':checkbox') && $('input['+rule.param+'="'+group+'"]:checked').length == 0 ) ){
+                                    error++;
+                                    fields.push(el);
+                                }
+                            });
+                        } catch (err) { /* noop */ }
                         break;
                     case 'at least':
                     case 'at most':
-                        // Value must be set and/or not empty
-                        var localFields = [];
-                        var count = 0;
-                        elem.each(function() {
-                            el = $(this);
-                            if ( el.is(':disabled') ) return;
-                            val = ptr.ltrim(ptr.rtrim(el.val()));
-                            localFields.push(el);
-                            // Checkboxes must be checked, radio groups must have at least one checked item, otherwise val() must not be empty
-                            if ((el.is(':checkbox ') && !el.is(':checked')) ||
-                                (el.is(':radio') && $('input[name='+el.attr('name')+']:checked').length == 0 ) ||
-                                (val == '') ){
-                                // Do nothing, an empty field doesn't increment counter
-                            } else {
-                                count++;
+                        try {
+                            // Value must be set and/or not empty
+                            var localFields = [];
+                            var count = 0;
+                            elem.each(function() {
+                                el = $(this);
+                                if ( el.is(':disabled') ) return;
+                                val = ptr.ltrim(ptr.rtrim(el.val()));
+                                localFields.push(el);
+                                // Checkboxes must be checked, radio groups must have at least one checked item, otherwise val() must not be empty
+                                if ((el.is(':checkbox ') && !el.is(':checked')) ||
+                                    (el.is(':radio') && $('input[name='+el.attr('name')+']:checked').length == 0 ) ||
+                                    (val == '') ){
+                                    // Do nothing, an empty field doesn't increment counter
+                                } else {
+                                    count++;
+                                }
+                            });
+                            if (rule.type == 'at least' && count < rule.param) {
+                                // There aren't at least n items
+                                error++;
+                                fields = fields.concat(localFields);
+                            } else if (rule.type == 'at most' && count > rule.param) {
+                                // At most n items
+                                error++;
+                                fields = fields.concat(localFields);
                             }
-                        });
-                        if (rule.type == 'at least' && count < rule.param) {
-                            // There aren't at least n items
-                            error++;
-                            fields = fields.concat(localFields);
-                        } else if (rule.type == 'at most' && count > rule.param) {
-                            // At most n items
-                            error++;
-                            fields = fields.concat(localFields);
-                        }
+                        } catch (err) { /* noop */ }
+                        break;
+                    case 'date':
+                        try {
+                            var isValid = true;
+                            // Basic check, val must not be empty
+                            elem.each(function() {
+                                el = $(this);
+                                if ( el.is(':disabled') ) return;
+                                val = ptr.ltrim(ptr.rtrim(el.val()));
+                                if ( val == '' ){
+                                    error++;
+                                    fields.push(el);
+                                    isValid = false;
+                                }
+                            });
+                            // Now, there are two possibilities: three-select-composite (yyyy, mm, dd) or single-input (yyyy/mm/dd)
+                            if ( elem.length == 3 && elem.is('select') ) {
+                                // Now check if there is a before/after parameter
+                                if (rule.param && isValid) {
+                                    var year = elem.filter('select[data-name=year]');
+                                    var month = elem.filter('select[data-name=month]');
+                                    var day = elem.filter('select[data-name=day]');
+                                    var dateArr = [ year.val(), month.val(), day.val() ];
+                                    var checkArr = rule.param.split('/');
+                                    var date = new Date(dateArr[0], --dateArr[1], dateArr[2]);
+                                    var check = new Date(checkArr[0], --checkArr[1], checkArr[2]);
+                                    // Now compare timestamps
+                                    if ( rule.val == 'before' && date.getTime() >= check.getTime() ) {
+                                        fields.push(year);
+                                        fields.push(month);
+                                        fields.push(day);
+                                        error += 3;
+                                    } else if ( rule.val == 'after' && date.getTime() <= check.getTime() ) {
+                                        fields.push(year);
+                                        fields.push(month);
+                                        fields.push(day);
+                                        error += 3;
+                                    }
+                                }
+                            } else if ( elem.is('input') ) {
+                                // Now check if there is a before/after parameter
+                                if (rule.param && isValid) {
+                                    elem.each(function() {
+                                        var el = $(this);
+                                        var dateStr = el.val();
+                                        var dateArr = dateStr.split('/');
+                                        var checkArr = rule.param.split('/');
+                                        var date = new Date(dateArr[0], --dateArr[1], dateArr[2]);
+                                        var check = new Date(checkArr[0], --checkArr[1], checkArr[2]);
+                                        // Now compare timestamps
+                                        if ( rule.val == 'before' && date.getTime() >= check.getTime() ) {
+                                            fields.push(el);
+                                            error++;
+                                        } else if ( rule.val == 'after' && date.getTime() <= check.getTime() ) {
+                                            fields.push(el);
+                                            error++;
+                                        }
+                                    });
+                                }
+                            }
+                        } catch (err) { /* noop */ }
                         break;
                 }
             }
@@ -184,6 +257,9 @@
                 msg: null,
                 attr: null,
                 param: null,
+                items: null,
+                before: null,
+                after: null,
                 to: null,
                 match: null,
                 auto: false
@@ -193,8 +269,17 @@
                     el: opts.el,
                     type: opts.type,
                     msg: opts.msg,
-                    param: opts.param || opts.to || opts.match
+                    param: opts.param || opts.to || opts.match || opts.before || opts.after || opts.items,
+                    val: null
                 };
+                // Now set extended value if required
+                switch (opts.type) {
+                    case 'date':
+                        rule.val = opts.before ? 'before' : (opts.after ? 'after' : null);
+                        break;
+                    default:
+                        //
+                }
                 // Automatic validation
                 if (opts.auto) {
                     var el = typeof opts.el == 'string' ? $(opts.el) : opts.el;
