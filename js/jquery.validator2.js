@@ -1,4 +1,5 @@
 /*
+<<<<<<< HEAD
 * jquery.validator2.js
 *
 * Plugin: Validator
@@ -7,6 +8,16 @@
 * Version: 2.6 (20130913)
 * License: MIT
 */
+=======
+ *  jquery.validator2.js
+ *
+ *  Plugin: Validator
+ *  Author: biohzrdmx
+ *  Description: A very simple form validation plugin
+ *  Version: 2.5 (20130720)
+ *  License: MIT
+ */
+>>>>>>> 436681c28da03102208d64d638ad04f6722c755d
 (function($) {
 
     $.validator = {
