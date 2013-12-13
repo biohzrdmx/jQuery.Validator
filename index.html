@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jQuery Validator 3</title>
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap-theme.css">
+	<style>
+		body { padding-top: 70px; }
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container"><!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">jQuery Validator 3</a>
+			</div>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<!-- <li class="active"><a href="#">Overview</a></li> -->
+			</ul>
+			</div><!-- /.navbar-collapse --></div>
+	</nav>
+
+	<div class="container">
+		<h2>Introduction</h2>
+		<p>What's this? Just another jQuery form validation plugin.</p>
+		<p>Why? Because I needed a semantic, easy-to-use, extensible plug-in.</p>
+		<h3>Credits</h3>
+		<p><strong>Lead coder:</strong> biohzrdmx <a href="http://github.com/biohzrdmx">&lt;github.com/biohzrdmx&gt;</a></p>
+		<h3>License</h3>
+		<p>The MIT License (MIT)</p>
+		<p>Copyright (c) 2013 biohzrdmx</p>
+		<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+		<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+		<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+		<h2>Basic usage</h2>
+		<h3>Step one: Markup</h3>
+		<p><span class="label label-info">Note</span> For <code>data-*</code> attributes to be used, you'll need a valid HTML 5 DOCTYPE.</p>
+		<p>Create your forms as usual, then just add some <code>data-*</code> parameters:</p>
+		<pre><code>&lt;form id="form-test" method="post"&gt;
+	&lt;label&gt;Enter your name:&lt;/label&gt;
+	&lt;input type=&quot;text&quot; name=&quot;name&quot; id=&quot;name&quot; data-validate=&quot;required&quot;&gt;
+&lt;/form&gt;</code></pre>
+		<p>The <code>data-validate</code> attribute specifies the kind of validator that will be used to check the field, you may choose one of:</p>
+		<ul>
+			<li><code>required</code></li>
+			<li><code>equal</code></li>
+			<li><code>email</code></li>
+			<li><code>regexp</code></li>
+			<li><code>checked</code></li>
+			<li><code>date</code></li>
+		</ul>
+		<p>Some of these validator types require an extra parameter so you just have to add another <code>data-*</code> attribute: <code>data-param</code></p>
+
+		<h4>Required type</h4>
+		<p>Just checks if the field has been set, checkboxes must be checked and radio groups must have at least one item checked.</p>
+		<p><span class="label label-info">Note</span> Radio-group items must have a common <code>name</code> attribute.</p>
+
+		<h4>Equal type</h4>
+		<p>Checks if the given element's value matches another element; useful for email/password confirmation.</p>
+		<p>The <code>data-param</code> attribute must contain a selector to the other element:</p>
+		<pre><code>&lt;input type=&quot;text&quot; name=&quot;email_check&quot; id=&quot;email_check&quot; data-validate=&quot;equal&quot; data-param=&quot;input[name=email]&quot;&gt;</code></pre>
+
+		<h4>Email type</h4>
+		<p>The well-known email checker, uses a regular expression to validate the entered email address.</p>
+		<p><span class="label label-info">Note</span> Hey regex nerds! this is the regular expression: <code>/^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/</code></p>
+
+		<h4>RegExp type</h4>
+		<p>A powerful one, this uses a custom regular expression to match the value of the field.</p>
+		<p>As you may have guessed, the regular expression is passed through the <code>data-param</code> attribute:</p>
+		<pre><code>&lt;input type=&quot;text&quot; name=&quot;date&quot; id=&quot;date&quot; data-validate=&quot;regexp&quot; data-param=&quot;[0-9]{4}\/[0-9]{1,2}\/[0-9]{1,2}&quot;&gt;</code></pre>
+
+		<h4>Checked type</h4>
+		<p>This is for checkbox-groups, you can specify a minimum or maximum ammount and even an exact number of required items.</p>
+		<p>The options are passed via the <code>data-param</code> attribute, <strong>only for the first item</strong>:</p>
+		<pre><code>&lt;label for=&quot;opt_1&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;hobbies&quot; id=&quot;opt_1&quot; data-validate=&quot;checked&quot; data-param=&quot;at least 2&quot;&gt;Option 1&lt;/label&gt;
+&lt;label for=&quot;opt_2&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;hobbies&quot; id=&quot;opt_2&quot;&gt;Option 2&lt;/label&gt;
+&lt;label for=&quot;opt_3&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;hobbies&quot; id=&quot;opt_3&quot;&gt;Option 3&lt;/label&gt;
+&lt;label for=&quot;opt_4&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;hobbies&quot; id=&quot;opt_4&quot;&gt;Option 4&lt;/label&gt;
+&lt;label for=&quot;opt_5&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;hobbies&quot; id=&quot;opt_5&quot;&gt;Option 5&lt;/label&gt;</code></pre>
+		<p>And you may choose one of:</p>
+		<ul>
+			<li><code>at least #</code></li>
+			<li><code>at most #</code></li>
+			<li><code>exactly #</code></li>
+		</ul>
+		<p>Where <code>#</code> is any valid integer.</p>
+		<p><span class="label label-info">Note</span> Checkbox-group items must have a common <code>name</code> attribute.</p>
+
+		<h4>Date type</h4>
+		<p>The date validator does exactly that: validate dates.</p>
+		<p>For it to work, you must add some extra markup but, hey, it's not that bad: Just wrap your <code>select</code> boxes in a <code>div</code> or <code>span</code> and add the <code>data-*</code> attributes <strong>to the wrapping element</strong>:</p>
+		<pre><code>&lt;div class=&quot;i-r-wrapper&quot; data-validate=&quot;date&quot; data-param=&quot;before 1985/01/01&quot;&gt;
+	&lt;select data-date=&quot;year&quot; name=&quot;year&quot;&gt;...&lt;/select&gt;
+	&lt;select data-date=&quot;month&quot; name=&quot;month&quot;&gt;...&lt;/select&gt;
+	&lt;select data-date=&quot;day&quot; name=&quot;day&quot;&gt;...&lt;/select&gt;
+&lt;/div&gt;</code></pre>
+		<p>As you may have noticed, there is also an extra <code>data-date</code> attribute on each of the <code>select</code> boxes; that attribute specifies which date component (day, month or year) is being represented by the field.</p>
+		<p>You can have only the year component, year/month fields or the full year/month/day stack, it's up to your needs. Just remember to add the correct <code>data-date</code> attributes.</p>
+		<p>Finally, you must specify the date that the fields will be checked against; for it you'll use the <code>data-param</code> attribute, using one of:</p>
+		<ul>
+			<li><code>before yyyy/mm/dd</code></li>
+			<li><code>after yyyy/mm/dd</code></li>
+			<li><code>exactly yyyy/mm/dd</code></li>
+		</ul>
+		<p>Remember, this attribute (as well as the <code>data-validate</code> one) must go on the wrapper element.</p>
+		<p>Once you have written your markup it's time to code some JS.</p>
+
+		<h3>Step Two: JavaScript</h3>
+		<p>As simple as it gets, in your <code>ready()</code> function:</p>
+		<pre><code>$('#form-test').on('submit', function() {
+	return $(this).validate({
+		success: function() {
+			/* Everything is OK, continue */
+		},
+		error: function(fields) {
+			/* Missing info! 'fields' is a jQuery object with the offending fields */
+		}
+	});
+});</code></pre>
+		<p>That's all you need to validate your forms quickly and easily. Don't forget server-side validation.</p>
+		<h3>What if the validation-types that I need are not included?</h3>
+		<p>Well, you may add your own types if you want. It's pretty simple:</p>
+		<p>You'll need to add them <strong>after including the jquery.validator3.js file</strong> (or jquery.validator3.min.js for bandwidth savers), an anonymous self-calling function will do:</p>
+		<pre><code>(function($) {
+	// Here we are creating a custom validator type for simple ranges
+	$.fn.validate.types.range = function(options) {
+		var element = options.element || null;
+		var param = options.param || null;
+		if (element &amp;&amp; !element.is(':disabled')) {
+			var opts = param.match(/([0-9]+)...([0-9]+)/);
+			var min = Number( opts[1] ) || 0;
+			var max = Number( opts[2] ) || 100;
+			var val = Number( element.val() );
+			return (val &gt;= min &amp;&amp; val &lt;= max);
+		}
+		return true;
+	};
+})(jQuery);</code></pre>
+		<p>As you can see, we are just adding an extra <code>range</code> function to the validators list, that function receives an <code>options</code> object with the jQuery <code>element</code> and its <code>data-param</code> as the <code>param</code> property.</p>
+		<p>Our sample type checks whether the element's value is inside the given range, using a simple regular expression to parse the parameter, then checking the element's <code>disabled</code> state and using simple math to return the result.</p>
+		<p>The function is called once per field, for each field with a <code>data-validate=&quot;range&quot;</code> attribute: returning <code>true</code> means the field passed the validation.</p>
+
+			<h2>Example</h2>
+			<p>The following form showcases some of the plugin functionality:</p>
+			<br>
+			<div class="row">
+				<form action="" id="form-test" method="post" class="col-md-5 col-md-offset-1 well">
+				<div class="form-group">
+					<label class="control-label" for="name">Name</label>
+					<input type="text" name="name" id="name" class="form-control" data-validate="required">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="name">Genre</label>
+					<div class="radio">
+						<label for="genre_male"><input type="radio" name="genre" id="genre_male" data-validate="required">Male</label>
+					</div>
+					<div class="radio">
+						<label for="genre_female"><input type="radio" name="genre" id="genre_female">Female</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="name">Hobbies</label>
+					<div class="checkbox">
+						<label for="hobbie_tv"><input type="checkbox" name="hobbie" id="hobbie_tv" data-validate="checked" data-param="at least 2">TV</label>
+					</div>
+					<div class="checkbox">
+						<label for="hobbie_sports"><input type="checkbox" name="hobbie" id="hobbie_sports">Sports</label>
+					</div>
+					<div class="checkbox">
+						<label for="hobbie_games"><input type="checkbox" name="hobbie" id="hobbie_games">Videogames</label>
+					</div>
+					<div class="checkbox">
+						<label for="hobbie_books"><input type="checkbox" name="hobbie" id="hobbie_books">Books</label>
+					</div>
+					<span class="help-block">Hint: choose at least 2 hobbies</span>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="email">Email</label>
+					<input type="text" name="email" id="email" class="form-control" data-validate="email">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="email_check">Confirm email</label>
+					<input type="text" name="email_check" id="email_check" class="form-control" data-validate="equal" data-param="input[name='email']">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="password">Password</label>
+					<input type="password" name="password" id="password" class="form-control" data-validate="required">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="password_check">Confirm password</label>
+					<input type="password" name="password_check" id="password_check" class="form-control" data-validate="equal" data-param="input[name='password']">
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="date">Date</label>
+					<input type="text" name="date" id="date" class="form-control" data-validate="regexp" data-param="[0-9]{4}\/[0-9]{1,2}\/[0-9]{1,2}">
+					<span class="help-block">Hint: date format must be 'yyyy/mm/dd'</span>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="date">Birthdate</label>
+					<span data-validate="date" data-param="before 1995/01/01">
+						<div class="row">
+							<div class="col-xs-4">
+								<select data-date="year" name="year" id="year" class="form-control">
+									<option value=""></option> <option value="2013">2013</option> <option value="2012">2012</option> <option value="2011">2011</option> <option value="2010">2010</option> <option value="2009">2009</option> <option value="2008">2008</option> <option value="2007">2007</option> <option value="2006">2006</option> <option value="2005">2005</option> <option value="2004">2004</option> <option value="2003">2003</option> <option value="2002">2002</option> <option value="2001">2001</option> <option value="2000">2000</option> <option value="1999">1999</option> <option value="1998">1998</option> <option value="1997">1997</option> <option value="1996">1996</option> <option value="1995">1995</option> <option value="1994">1994</option> <option value="1993">1993</option> <option value="1992">1992</option> <option value="1991">1991</option> <option value="1990">1990</option> <option value="1989">1989</option> <option value="1988">1988</option> <option value="1987">1987</option> <option value="1986">1986</option> <option value="1985">1985</option>
+								</select>
+							</div>
+							<div class="col-xs-4">
+								<select data-date="month" name="month" id="month" class="form-control">
+									<option value=""></option> <option value="01">1</option> <option value="02">2</option> <option value="03">3</option> <option value="04">4</option> <option value="05">5</option> <option value="06">6</option> <option value="07">7</option> <option value="08">8</option> <option value="09">9</option> <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+								</select>
+							</div>
+							<div class="col-xs-4">
+								<select data-date="day" name="day" id="day" class="form-control">
+									<option value=""></option> <option value="01">1</option> <option value="02">2</option> <option value="03">3</option> <option value="04">4</option> <option value="05">5</option> <option value="06">6</option> <option value="07">7</option> <option value="08">8</option> <option value="09">9</option> <option value="10">10</option> <option value="11">11</option> <option value="12">12</option> <option value="13">13</option> <option value="14">14</option> <option value="15">15</option> <option value="16">16</option> <option value="17">17</option> <option value="18">18</option> <option value="19">19</option> <option value="20">20</option> <option value="21">21</option> <option value="22">22</option> <option value="23">23</option> <option value="24">24</option> <option value="25">25</option> <option value="26">26</option> <option value="27">27</option> <option value="28">28</option> <option value="29">29</option> <option value="30">30</option> <option value="31">31</option>
+								</select>
+							</div>
+						</div>
+					</span>
+					<span class="help-block">Hint: You must be at least 18 years old</span>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="date">Expiration date</label>
+					<span data-validate="date" data-param="after 2013/01/01">
+						<div class="row">
+							<div class="col-xs-6">
+								<select data-date="year" name="year" id="year" class="form-control">
+									<option value=""></option> <option value="2012">2012</option> <option value="2013">2013</option> <option value="2014">2014</option> <option value="2015">2015</option> <option value="2016">2016</option> <option value="2017">2017</option> <option value="2018">2018</option> <option value="2019">2019</option> <option value="2020">2020</option>
+								</select>
+							</div>
+							<div class="col-xs-6">
+								<select data-date="month" name="month" id="month" class="form-control">
+									<option value=""></option> <option value="01">1</option> <option value="02">2</option> <option value="03">3</option> <option value="04">4</option> <option value="05">5</option> <option value="06">6</option> <option value="07">7</option> <option value="08">8</option> <option value="09">9</option> <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+								</select>
+							</div>
+						</div>
+					</span>
+					<span class="help-block">Hint: any date past 2013/01 will do</span>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="test">Range (custom rule type)</label>
+					<input type="text" name="test" id="test" class="form-control" data-validate="range" data-param="5...10">
+					<span class="help-block">Hint: Enter any number between 5 and 10, inclusive</span>
+				</div>
+				<div class="form-group text-right">
+					<button class="btn btn-primary">Submit form</button>
+				</div>
+			</form>
+		</div>
+		<hr>
+		<p class="text-center text-muted">biohzrdmx</p>
+	</div>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery-1.8.0.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="jquery.validator3.js"></script>
+	<script type="text/javascript">
+		// Custom validator rule
+		(function($) {
+			// Here we are creating a custom validator type for simple ranges
+			$.fn.validate.types.range = function(options) {
+				var element = options.element || null;
+				var param = options.param || null;
+				if (element && !element.is(':disabled')) {
+					var opts = param.match(/([0-9]+)...([0-9]+)/);
+					var min = Number( opts[1] ) || 0;
+					var max = Number( opts[2] ) || 100;
+					var val = Number( element.val() );
+					return (val >= min && val <= max);
+				}
+				return true;
+			};
+		})(jQuery);
+		// Default logic
+		jQuery(document).ready(function($) {
+			$('#form-test').on('submit', function() {
+				var form = $(this);
+				form.find('.has-error').removeClass('has-error');
+				return form.validate({
+					error: function(fields) {
+						fields.each(function(index, el) {
+							var field = $(el);
+							field.closest('.form-group').addClass('has-error');
+						});
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>
