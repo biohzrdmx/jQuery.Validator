@@ -1,7 +1,7 @@
 /**
  * jQuery Validator 3
  * @author     biohzrdmx <github.com/biohzrdmx>
- * @version    3.0.20131213
+ * @version    3.0.20140726
  * @requires   jQuery 1.8+
  * @license    MIT
  */
@@ -196,6 +196,22 @@
 					ret = dateValue == dateCheck;
 				}
 				return ret;
+			}
+			return true;
+		},
+		confirm: function(options) {
+			var element = options.element || null;
+			var param = options.param || null;
+			var compare;
+			if ( element && !element.is(':disabled') ) {
+				if ( typeof(param) == 'string' ) {
+					compare = $(param);
+				} else {
+					compare = param;
+				}
+				if ( compare === null || (compare.val() != '' && element.val() == '') || element.val() !== compare.val() ) {
+					return false
+				}
 			}
 			return true;
 		}
