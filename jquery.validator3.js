@@ -1,7 +1,7 @@
 /**
  * jQuery Validator 3
  * @author     biohzrdmx <github.com/biohzrdmx>
- * @version    3.0.20131213
+ * @version    3.0.20150722
  * @requires   jQuery 1.8+
  * @license    MIT
  */
@@ -67,7 +67,7 @@
 		required: function(options) {
 			var element = options.element || null;
 			var param = options.param || null;
-			if ( element && !element.is(':disabled') ) {
+			if ( element && element.is(':visible') && !element.is(':disabled') ) {
 				var val = $.trim( element.val() );
 				// Checkboxes must be checked, radio groups must have at least one checked item, otherwise val() must not be empty
 				if  (
@@ -84,7 +84,7 @@
 			var element = options.element || null;
 			var param = options.param || null;
 			var compare;
-			if ( element && !element.is(':disabled') ) {
+			if ( element && element.is(':visible') && !element.is(':disabled') ) {
 				if ( typeof(param) == 'string' ) {
 					compare = $(param);
 				} else {
@@ -100,7 +100,7 @@
 			var element = options.element || null;
 			var param = options.param || null;
 			var regexp = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-			if (element && !element.is(':disabled')) {
+			if (element && element.is(':visible') && !element.is(':disabled')) {
 				return regexp.test( element.val() );
 			}
 			return true;
@@ -109,7 +109,7 @@
 			var element = options.element || null;
 			var param = options.param || null;
 			var regexp = new RegExp(param);
-			if (element && !element.is(':disabled')) {
+			if (element && element.is(':visible') && !element.is(':disabled')) {
 				return regexp.test( element.val() );
 			}
 			return true;
@@ -117,7 +117,7 @@
 		checked: function (options) {
 			var element = options.element || null;
 			var param = options.param || null;
-			if ( element && !element.is(':disabled') ) {
+			if ( element && element.is(':visible') && !element.is(':disabled') ) {
 				var opts = param.match(/(at least|at most|exactly)\s([0-9]+)/);
 				var opt = opts[1] || 'exactly';
 				var qty = opts[2] || 1;
@@ -140,7 +140,7 @@
 		date: function (options) {
 			var element = options.element || null;
 			var params = options.param || null;
-			if ( element && !element.is(':disabled') ) {
+			if ( element && element.is(':visible') && !element.is(':disabled') ) {
 				var opts = params.match(/(before|after)\s([0-9]{4})\/([0-9]{1,2})\/([0-9]{1,2})/);
 				var dateOpt= opts[1] || 'before';
 				var dateCheck = new Date(opts[2] || 1900, --opts[3] || 0, opts[4] || 1);
