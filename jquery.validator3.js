@@ -198,6 +198,22 @@
 				return ret;
 			}
 			return true;
+		},
+		confirm: function(options) {
+			var element = options.element || null;
+			var param = options.param || null;
+			var compare;
+			if ( element && !element.is(':disabled') ) {
+				if ( typeof(param) == 'string' ) {
+					compare = $(param);
+				} else {
+					compare = param;
+				}
+				if ( compare === null || (compare.val() != '' && element.val() == '') || element.val() !== compare.val() ) {
+					return false
+				}
+			}
+			return true;
 		}
 	};
 	// default options
