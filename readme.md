@@ -12,13 +12,27 @@ Why? Because I needed a semantic, easy-to-use, extensible plug-in.
 
 The MIT License (MIT)
 
-Copyright (c) 2013 biohzrdmx
+Copyright (c) 2016 biohzrdmx
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+##What's new##
+
+**Changes from version 3.x**
+
+- **New file names** - Now the files are named `jquery.valid4tor.js` and `jquery.valid4tor.min.js` &mdash; l33t speak FTW!
+- **New namespace** - The namespace is now `$.validate` instead of `$.fn.validate`
+- **Multiple rules** - Now you can add multiple validation rules, for example `data-validate="required|email"`. The order determines in which sequence they'll be executed.
+- **Callbacks** - The `success` and `error` callbacks should now be specified inside the `callback` object; also there's a new callback `failed` which will run on a per-field basis whenerver a field doesn't pass a validation rule.
+- **On demand validation** - You may continue using the `$.fn.validate` call as in `$('#my-form').validate(...)` BUT now you can also use the new API call `$.validate.check(fields, options)` in which you can pass the fields you actually want to validate.
+- **Fields selector** - In the beginning, the validator used only `:visible` and `:not(:disabled)` fields and there was no way to override that. Now you can use the above API call or override the `fieldsSelector` option to specify which fields you want. Because you deserved it!
+- **Break on fail** - As you already know, you can specify multiple rules per-field and there's a new `failed` callback, so there's also a new `breakOnFail` option to determine whether to continue running validations on each field when a rule hasn't been met or not.
+- **Messages** - Finally! If you use the new `failed` callback you'll receive a message for each failed rule, for example `'This field is required'` for the `required` type. There's also a new `strings` object in `options` to assist you in your localization needs.
+- **Data messages** - In addition to the above feature, you may specify a `data-message-*` attribute to override the message for a specific rule in a specific field, for example `data-message-regexp="This must be a number"` overrides the message for the `regexp` rule on a particular field. Tasty!
 
 ##Basic usage##
 
@@ -126,11 +140,16 @@ As simple as it gets, in your `ready()` function:
 
 	$('#form-test').on('submit', function() {
 		return $(this).validate({
-			success: function() {
-				/* Everything is OK, continue */
-			},
-			error: function(fields) {
-				/* Missing info! 'fields' is a jQuery object with the offending fields */
+			callbacks: {
+				failed: function(field, type, message) {
+					/* An item has failed validation, field has the jQuery object, type is the rule and message its description */
+				},
+				success: function() {
+					/* Everything is OK, continue */
+				},
+				error: function(fields) {
+					/* Missing info! 'fields' is a jQuery object with the offending fields */
+				}
 			}
 		});
 	});
@@ -141,21 +160,24 @@ That's all you need to validate your forms quickly and easily. Don't forget serv
 
 Well, you may add your own types if you want. It's pretty simple:
 
-You'll need to add them **after including the jquery.validator3.js file** (or jquery.validator3.min.js for bandwidth savers), an anonymous self-calling function will do:
+You'll need to add them **after including the jquery.valid4tor.js file** (or jquery.valid4tor.min.js for bandwidth savers), an anonymous self-calling function will do:
 
 	(function($) {
 		// Here we are creating a custom validator type for simple ranges
-		$.fn.validate.types.range = function(options) {
-			var element = options.element || null;
-			var param = options.param || null;
-			if (element && !element.is(':disabled')) {
+		$.validate.types.range = function(field, options) {
+			var param = field.data('param') || null,
+				ret = true;
+			if ( field.length ) {
 				var opts = param.match(/([0-9]+)...([0-9]+)/);
 				var min = Number( opts[1] ) || 0;
 				var max = Number( opts[2] ) || 100;
-				var val = Number( element.val() );
-				return (val >= min && val <= max);
+				var val = Number( field.val() );
+				ret = (val >= min && val <= max);
+				if (! ret ) {
+					options.callbacks.fail.call(this, field, 'range', 'Enter any number between 5 and 10, inclusive');
+				}
 			}
-			return true;
+			return ret;
 		};
 	})(jQuery);
 
