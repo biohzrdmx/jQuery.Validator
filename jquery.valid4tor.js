@@ -207,6 +207,7 @@
 		},
 		check: function(fields, options) {
 			var obj = this,
+				opts = $.extend(true, {}, $.validate.defaults, options),
 				errors = 0,
 				errorFields = [];
 			$.each(fields, function() {
@@ -218,7 +219,7 @@
 						res = false;
 					if ( typeof $.validate.types[type] === 'function' ) {
 						// Run validation rule
-						var res = $.validate.types[type].call(obj, field, options);
+						var res = $.validate.types[type].call(obj, field, opts);
 					}
 					if (! res ) {
 						// Increase error counter
@@ -226,15 +227,15 @@
 						// Add field to array
 						errorFields.push(field);
 						// Should we exit?
-						if (options.breakOnFail) break;
+						if (opts.breakOnFail) break;
 					}
 				};
 			});
 			// Run callbacks
 			if (! errors ) {
-				options.callbacks.success.call(obj, fields);
+				opts.callbacks.success.call(obj, fields);
 			} else {
-				options.callbacks.error.call(obj, $(errorFields));
+				opts.callbacks.error.call(obj, $(errorFields));
 			}
 			// Return TRUE if there are no errors, FALSE otherwise
 			return (errors == 0);
