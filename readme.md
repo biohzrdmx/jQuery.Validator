@@ -30,8 +30,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - **Callbacks** - The `success` and `error` callbacks should now be specified inside the `callback` object; also there's a new callback `failed` which will run on a per-field basis whenerver a field doesn't pass a validation rule.
 - **On demand validation** - You may continue using the `$.fn.validate` call as in `$('#my-form').validate(...)` BUT now you can also use the new API call `$.validate.check(fields, options)` in which you can pass the fields you actually want to validate.
 - **Fields selector** - In the beginning, the validator used only `:visible` and `:not(:disabled)` fields and there was no way to override that. Now you can use the above API call or override the `fieldsSelector` option to specify which fields you want. Because you deserved it!
-- **Break on fail** - As you already know, you can specify multiple rules per-field and there's a new `failed` callback, so there's also a new `breakOnFail` option to determine whether to continue running validations on each field when a rule hasn't been met or not.
-- **Messages** - Finally! If you use the new `failed` callback you'll receive a message for each failed rule, for example `'This field is required'` for the `required` type. There's also a new `strings` object in `options` to assist you in your localization needs.
+- **Break on fail** - As you already know, you can specify multiple rules per-field and there's a new `fail` callback, so there's also a new `breakOnFail` option to determine whether to continue running validations on each field when a rule hasn't been met or not.
+- **Messages** - Finally! If you use the new `fail` callback you'll receive a message for each failed rule, for example `'This field is required'` for the `required` type. There's also a new `strings` object in `options` to assist you in your localization needs.
 - **Data messages** - In addition to the above feature, you may specify a `data-message-*` attribute to override the message for a specific rule in a specific field, for example `data-message-regexp="This must be a number"` overrides the message for the `regexp` rule on a particular field. Tasty!
 
 ##Basic usage##
@@ -141,7 +141,7 @@ As simple as it gets, in your `ready()` function:
 	$('#form-test').on('submit', function() {
 		return $(this).validate({
 			callbacks: {
-				failed: function(field, type, message) {
+				fail: function(field, type, message) {
 					/* An item has failed validation, field has the jQuery object, type is the rule and message its description */
 				},
 				success: function() {
