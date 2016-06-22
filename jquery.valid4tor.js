@@ -219,15 +219,15 @@
 						res = false;
 					if ( typeof $.validate.types[type] === 'function' ) {
 						// Run validation rule
-						var res = $.validate.types[type].call(obj, field, opts);
-					}
-					if (! res ) {
-						// Increase error counter
-						errors++;
-						// Add field to array
-						errorFields.push(field);
-						// Should we exit?
-						if (opts.breakOnFail) break;
+						res = $.validate.types[type].call(obj, field, opts);
+						if (! res ) {
+							// Increase error counter
+							errors++;
+							// Add field to array
+							errorFields.push(field);
+							// Should we exit?
+							if (opts.breakOnFail) break;
+						}
 					}
 				};
 			});
