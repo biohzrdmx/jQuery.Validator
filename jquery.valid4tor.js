@@ -58,7 +58,7 @@
 				if ( field.length ) {
 					if  (
 							(field.is(':checkbox ') && !field.is(':checked')) ||
-							(field.is(':radio') && $('input[name=' + field.attr('name')+']:checked').length == 0 ) ||
+							(field.is(':radio') && $('input[name="' + field.attr('name')+'"]:checked').length == 0 ) ||
 							(val == '')
 						){
 						ret = false;
@@ -129,11 +129,12 @@
 					opts = param.match(/(at least|at most|exactly)\s([0-9]+)/),
 					opt = opts[1] || 'exactly',
 					qty = opts[2] || 1,
-					val = $('input[name=' + field.attr('name') + ']:checked').length,
+					val = $('input[name="' + field.attr('name') + '"]:checked').length,
 					message = field.data('message-checked');
 				if ( field.length ) {
+					qty = Number(qty);
 					switch (opt) {
-					case 'at least':
+						case 'at least':
 							ret = val >= qty;
 						break;
 						case 'at most':
